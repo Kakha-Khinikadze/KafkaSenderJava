@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka_2.13:3.5.1'
+    implementation 'org.apache.kafka:kafka-clients:3.5.1'
+    implementation 'org.scala-lang:scala-library:2.13.10'
+    implementation 'org.json:json:20230618'
+    implementation 'org.openjfx:javafx-swing:22-ea+9'
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+}
+
+group = 'kafka_sender'
+version = '1.0'
+description = 'Swing Kafka Sender'
+
+
+allprojects {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+
+task runApp(type: JavaExec) {
+    main = 'SwingApp'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+
+jar {
+    manifest {
+        attributes "Main-Class": "kafka_sender.SwingApp"
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
